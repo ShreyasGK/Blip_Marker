@@ -11,8 +11,11 @@
                 </div>
             </div>
             <div class="mb-3">
-                <label class="form-label" for="location">Location</label>
-                <input class="form-control" type="text" id="location" name="campground[location]" required>
+                    <label class="form-label" for="location">Location</label>
+                    <div class="locc">
+                        <input class="form-control" type="text" id="location" name="campground[location]" required>
+                        <input type="button" name="MyLoc" value="📌" onclick="getloc()" >
+                    </div>
                 <div class="valid-feedback">
                     Looks good!
                 </div>
@@ -25,17 +28,17 @@
                     Looks good!
                 </div>
             </div> -->
-            <div class="mb-3">
+             <!--<div class="mb-3">
                 <label class="form-label" for="price">Marker Price</label>
                 <div class="input-group">
-                    <span class="input-group-text" id="price-label">$</span>
+                    <span class="input-group-text" id="price-label">₹</span>
                     <input type="text" class="form-control" id="price" placeholder="0.00" aria-label="price"
                         aria-describedby="price-label" name="campground[price]" required>
                 </div>
                 <div class="valid-feedback">
                     Looks good!
                 </div>
-            </div>
+            </div>-->
 
             <div class="mb-3">
                 <label class="form-label" for="description">Description</label>
@@ -61,3 +64,38 @@
         <a href="/campgrounds">All Markers</a>
     </div>
 </div>
+
+<script>
+    function getloc(){
+        function getCookie (name) {
+        let value = `; ${document.cookie}`;
+        let parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+    console.log(document.cookie);
+    console.log(getCookie("lat"));
+    let lat = getCookie('lat');
+    let lon = getCookie('lon');
+    let locationval = document.querySelector('#location');
+    locationval.value = `${lon}, ${lat}`;
+    }
+   
+    
+</script>
+
+<style>
+    .locc{
+        display:flex;
+        flex-direction:row;
+        padding:2px;
+        border-radius: 5px;
+    }
+    input[name = "campground[location]"]{
+        display: flex;
+        flex-direction: row;
+    }
+    button[name="MyLoc"]{
+        display: flex;
+        flex-direction: row;
+    }
+</style>

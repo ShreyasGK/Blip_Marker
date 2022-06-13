@@ -21,7 +21,8 @@ const reviewRoutes = require('./routes/reviews');
 
 const MongoDBStore = require("connect-mongo")(session);
 
-const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/yelp-camp';
+const dbUrl = process.env.DB_URL || 'mongodb+srv://blipMarker:blipMarker@cluster1.b5f4a.mongodb.net/blipMarker?retryWrites=true&w=majority';
+
 
 mongoose.connect(dbUrl, {
     useNewUrlParser: true,
@@ -42,12 +43,10 @@ app.engine('ejs', ejsMate)
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'))
 
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({extended: true}));
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')))
-app.use(mongoSanitize({
-    replaceWith: '_'
-}))
+app.use(mongoSanitize({replaceWith: '_'}))
 const secret = process.env.SECRET || 'thisshouldbeabettersecret!';
 
 const store = new MongoDBStore({
@@ -95,33 +94,42 @@ const styleSrcUrls = [
     "https://fonts.googleapis.com/",
     "https://use.fontawesome.com/",
 ];
-const connectSrcUrls = [
-    "https://api.mapbox.com/",
-    "https://a.tiles.mapbox.com/",
-    "https://b.tiles.mapbox.com/",
-    "https://events.mapbox.com/",
-];
+const connectSrcUrls = ["https://api.mapbox.com/", "https://a.tiles.mapbox.com/", "https://b.tiles.mapbox.com/", "https://events.mapbox.com/",];
 const fontSrcUrls = [];
-app.use(
-    helmet.contentSecurityPolicy({
-        directives: {
-            defaultSrc: [],
-            connectSrc: ["'self'", ...connectSrcUrls],
-            scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls],
-            styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
-            workerSrc: ["'self'", "blob:"],
-            objectSrc: [],
-            imgSrc: [
-                "'self'",
-                "blob:",
-                "data:",
-                "https://res.cloudinary.com/ddytof38y/", //SHOULD MATCH YOUR CLOUDINARY ACCOUNT! 
-                "https://images.unsplash.com/",
-            ],
-            fontSrc: ["'self'", ...fontSrcUrls],
-        },
-    })
-);
+app.use(helmet.contentSecurityPolicy({
+    directives: {
+        defaultSrc: [],
+        connectSrc: [
+            "'self'",
+            ... connectSrcUrls
+        ],
+        scriptSrc: [
+            "'unsafe-inline'",
+            "'self'",
+            ... scriptSrcUrls
+        ],
+        styleSrc: [
+            "'self'",
+            "'unsafe-inline'",
+            ... styleSrcUrls
+        ],
+        workerSrc: [
+            "'self'", "blob:"
+        ],
+        objectSrc: [],
+        imgSrc: [
+            "'self'",
+            "blob:",
+            "data:",
+            "https://res.cloudinary.com/ddytof38y/", // SHOULD MATCH YOUR CLOUDINARY ACCOUNT!
+            "https://images.unsplash.com/",
+        ],
+        fontSrc: [
+            "'self'",
+            ... fontSrcUrls
+        ]
+    }
+}));
 
 
 app.use(passport.initialize());
@@ -145,23 +153,23 @@ app.use('/campgrounds/:id/reviews', reviewRoutes)
 
 
 app.get('/', (req, res) => {
-    res.render('home')
+    res.render('home');
 });
-
 
 app.all('*', (req, res, next) => {
     next(new ExpressError('Page Not Found', 404))
 })
 
 app.use((err, req, res, next) => {
-    const { statusCode = 500 } = err;
-    if (!err.message) err.message = 'Oh No, Something Went Wrong!'
-    res.status(statusCode).render('error', { err })
+    const {
+        statusCode = 500
+    } = err;
+    if (!err.message) 
+        err.message = 'Oh No, Something Went Wrong!'
+    res.status(statusCode).render('error', {err})
 })
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`Serving on port ${port}`)
 })
-
-
